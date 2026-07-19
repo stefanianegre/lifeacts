@@ -34,17 +34,17 @@ function daysInMonth(d) {
   return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
 }
 
-async function loadKey(key, fallback) {
+function loadKey(key, fallback) {
   try {
-    const r = await window.storage.get(key, false);
-    return r ? JSON.parse(r.value) : fallback;
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
   } catch {
     return fallback;
   }
 }
-async function saveKey(key, value) {
+function saveKey(key, value) {
   try {
-    await window.storage.set(key, JSON.stringify(value), false);
+    localStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
     console.error("storage error", e);
   }
@@ -65,13 +65,11 @@ export default function VisionHabitPlanner() {
   const [newHabitTitle, setNewHabitTitle] = useState("");
 
   useEffect(() => {
-    (async () => {
-      setBoardItems(await loadKey("vhp-board-items", []));
-      setHabits(await loadKey("vhp-habits", []));
-      setCalendar(await loadKey("vhp-calendar-entries", {}));
-      setAccentByMode(await loadKey("vhp-accents", accentByMode));
-      setLoaded(true);
-    })();
+    setBoardItems(loadKey("vhp-board-items", []));
+    setHabits(loadKey("vhp-habits", []));
+    setCalendar(loadKey("vhp-calendar-entries", {}));
+    setAccentByMode(loadKey("vhp-accents", accentByMode));
+    setLoaded(true);
     // eslint-disable-next-line
   }, []);
 
